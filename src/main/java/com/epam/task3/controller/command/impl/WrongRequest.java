@@ -5,10 +5,9 @@ import com.epam.task3.controller.command.Command;
 /**
  *
  */
-public class InvalidRequest implements Command {
-    private static final String respons = "Unknown command.";
+public class WrongRequest implements Command {
     @Override
     public String execute(String request) {
-        return respons;
+        return null;
     }
 }

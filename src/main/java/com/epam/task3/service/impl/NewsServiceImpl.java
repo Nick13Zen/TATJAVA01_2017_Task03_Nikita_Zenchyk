@@ -7,7 +7,7 @@ import com.epam.task3.dao.factory.DAOFactory;
 import com.epam.task3.service.NewsService;
 import com.epam.task3.service.exception.ServiceException;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  *
@@ -30,7 +30,7 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public ArrayList<News> getNews() throws ServiceException {
+    public LinkedList<News> getNews() throws ServiceException {
         NewsDAO newsDAO;
         try {
             DAOFactory daoFactory = DAOFactory.getInstance();
@@ -45,9 +45,9 @@ public class NewsServiceImpl implements NewsService {
         if (news.getCategory().isEmpty()
                 || news.getAuthor().isEmpty()
                 || news.getTitle().isEmpty()) {
-            return false;
-        } else {
             return true;
+        } else {
+            return false;
         }
     }
 }

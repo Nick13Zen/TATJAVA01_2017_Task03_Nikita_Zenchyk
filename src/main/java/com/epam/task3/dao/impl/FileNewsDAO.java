@@ -6,6 +6,7 @@ import com.epam.task3.dao.exception.DAOException;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Class to work with data files.
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 public class FileNewsDAO implements NewsDAO{
     private static final String TXT_FILE_PATH = "newsCatalog.txt";
 
-    private ArrayList<News> findNews;
+    private LinkedList<News> findNews;
 
     /**
      * Method to add news to file
@@ -30,7 +31,7 @@ public class FileNewsDAO implements NewsDAO{
         } catch (FileNotFoundException e) {
             throw new DAOException("Not found txt file!");
         } catch (IOException e) {
-            throw new DAOException();
+            throw new DAOException(e);
         }
     }
 
@@ -40,8 +41,8 @@ public class FileNewsDAO implements NewsDAO{
      * @throws DAOException
      */
     @Override
-    public ArrayList<News> getNews() throws DAOException {
-        findNews = new ArrayList<>();
+    public LinkedList<News> getNews() throws DAOException {
+        findNews = new LinkedList();
         try {
             FileReader reader = new FileReader(TXT_FILE_PATH);
             BufferedReader br = new BufferedReader(reader);

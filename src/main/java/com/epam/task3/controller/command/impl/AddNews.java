@@ -1,6 +1,7 @@
 package com.epam.task3.controller.command.impl;
 
 import com.epam.task3.bean.News;
+import com.epam.task3.controller.Exception.ControllerException;
 import com.epam.task3.controller.NewsCategory;
 import com.epam.task3.controller.command.Command;
 import com.epam.task3.service.NewsService;
@@ -10,29 +11,25 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-/**
- *
- */
+
 public class AddNews implements Command {
 
-    final Logger logger = LogManager.getLogger(AddNews.class.getName());
+    private static final Logger logger = LogManager.getLogger(AddNews.class.getName());
 
     @Override
     public String execute(String request) {
         ServiceFactory serviceFactory = ServiceFactory.getInstance();
         NewsService newsService = serviceFactory.getNewsService();
-        String response = null;
+        String response;
         try {
             response = checkCorrectCategoryOfNews(request);
             newsService.addNews(getParamOfNews(request));
-        } catch (IllegalArgumentException e) {
-            logger.error("error message: " + e.getMessage());
-            logger.fatal("fatal error message: " + e.getMessage());
+        } catch (ControllerException e) {
+            logger.error(e);
             response = e.getMessage();
         } catch (ServiceException e) {
-            e.getStackTrace();
-            logger.error("error message: " + e.getMessage());
-            logger.fatal("fatal error message: " + e.getMessage());
+            logger.error(e);
+            response = e.getMessage();
         }
         return response;
     }
@@ -42,27 +39,29 @@ public class AddNews implements Command {
      * @param request
      * @return
      */
-    private News getParamOfNews(String request) {
+    private News getParamOfNews(String request) throws ControllerException {
         request = request.substring(request.indexOf(' ') + 1, request.length());
         String[] paramNews = request.split(",");
         News news;
         if (paramNews.length  < 3 || paramNews.length > 3) {
-            throw new IllegalArgumentException("Entered incorrect number of parameters!");
+            throw new ControllerException();
         } else {
             news = new News(paramNews[0], paramNews[1], paramNews[2]);
         }
         return news;
     }
 
-    private String checkCorrectCategoryOfNews(String request) {
+    private String checkCorrectCategoryOfNews(String request) throws ControllerException {
         String category = request.substring(request.indexOf(' ') + 1, request.indexOf(','));
-        String response = null;
+        String response ;
         try {
             if (category.toUpperCase().equals(NewsCategory.valueOf(category.toUpperCase()).toString())) {
                 response = "News added!";
+            } else {
+                response = "Error adding news.";
             }
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Error when you add news!");
+            throw new ControllerException(e);
         }
         return response;
     }
